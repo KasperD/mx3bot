@@ -152,11 +152,9 @@ IRC Bot written for the GameSurge network
       It would be appreciated if you sent me a note if you're successfully
       (or unsuccesfully) using this program.
 
-      Stop by #Mx3 on irc.gamesnet.net, and talk to influx or vodak.
+      Stop by #Fx on irc.gamesurge.net, and talk to influx or vodak.
       There's currently an old Mx3bot or two idling there, with the newer
       development versions usually running on a private ircd somewhere.
 
       Some kind of bug tracking forum/help forum should be going up on
       http://bot.mx3.org eventually.
-
-      Feel free to email influx@users.sourceforge.net with any comments.
