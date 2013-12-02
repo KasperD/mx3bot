@@ -1,0 +1,36 @@
+channel modes:
+
+.  +a  auto-join on start
+.  +g  games (and other pointless commands that output to channel)
+.  +i  allow setinfos
+.  +m  send param to users on join
+   +p  protect users with +o (passive)
+.  +s  service type (srvx)
+.  +t  topic format in param
+   +v  auto-voice all users [with param delay]
+
+
+user modes:
+
+.  +a  admin
+.  +d  user may connect via dcc
+.  +n  user may send notes
+.  +j  user may make bot join/part any channel
+.  +w  owner
+   +f  force password (user must have password)
+.  +w  owner
+.  +x  user is a pest, ignore for any commands with public replies
+
+
+user/channel modes:
+
+.  +a  channel admin (same as +bejmno, plus can set modes)
+.  +b  user may add/delete bans
+.  +e  user is exempt from addbans
+.  +i  user's setinfo in param, will display on join
+.  +j  user may join/part
+.  +m  user may use msg/notice/ctcp
+.  +n  allow inviteme
+.  +o  auto-op user
+   +p  protect user (passive)
+   +w  channel owner (same as +a, plus can edit admins)

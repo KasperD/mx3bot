@@ -1,0 +1,47 @@
+0.8.6
+
+ * All user access is done using user modes.  User levels
+   are no more.
+ * IRC queueing bugfix.
+
+0.8.5
+
+ * Text database support (experimental).
+ * Per-channel logfiles.
+ * Guided setup (--setup and --setup-owner).
+ * Support for extended regular expressions in masks.
+ * Autoconf-based configure script replaces all Makefile/mx3bot.h compile-
+      time settings.
+ * Buffered output to IRC servers.
+ * Better checking for active IRC server.
+ * New commands:
+   + resetpass
+   + setnick
+ * Miscellaneous bugfixes/optimizations.
+
+0.8.4
+
+ * Partial DCC support.
+ * Ban exemptions (+e).
+ * New commands:
+   + banlist
+   + fxsite
+   + inviteme
+   + uinfo
+ * Better Tcl error reporting.
+ * Miscellaneous bugfixes.
+
+0.8.3
+
+ * Logfile support.
+ * Join command fixed.
+ * Addban updated to +b a mask that is banned immediately.
+ * Support for PHPNuke databases added.
+ * phpnuke command added.
+ * Several compiler warnings fixed.
+ * Bot will change nick when its choice is in use by adding an underscore.
+
+0.8.2
+
+ * Changelog started.
+ 

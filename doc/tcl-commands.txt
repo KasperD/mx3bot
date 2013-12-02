@@ -1,0 +1,522 @@
+Commands added to Tcl interpreter:
+
+   *** IRC Commands: ***
+
+   privmsg <target> <message>
+
+      Sends <message> to <target> as a PRIVMSG.  <target> may be a nick or
+      a channel.
+
+      Does not return any value.
+
+   notice <target> <message>
+
+      Sends <message> to <target> as a NOTICE.  <target> may be a nick or
+      a channel.
+
+      Does not return any value.
+
+   ctcp <target> <ctcp>
+
+      Sends a CTCP message <ctcp> to <target>.  <target> may be a nick or
+      a channel.
+
+      Does not return any value.
+
+   joinchan <chan> [key]
+
+      Causes the bot to join the channel specified by <chan>, optionally
+      using the +k key [key].
+
+      Does not return any value.
+
+   partchan <chan>
+
+      Causes the bot to part the channel specified by <chan> on the
+      current network.
+
+      Does not return any value.
+
+   topic <chan> <topic>
+
+      Sets the topic on <chan> on the current network to <topic>.
+
+      Does not return any value.
+
+   mode <chan> <mode> [param]
+
+      Sets a mode on <chan> on the current network.  <mode> and [param]
+      are standard IRC modes.
+
+      Does not return any value.
+
+   kick <chan> <nick> [message]
+
+      Kicks the user with the nickname <nick> on <chan> on the current
+      network, optionally displaying [message].
+
+      Does not return any value.
+
+   reconnect [message]
+
+      Disconnects and reconnects to the current network, optionally giving
+      [message] as the reason.
+
+      Does not return any value.
+
+   disconnect [message]
+
+      Disconnects from the current network, optionally giving [message]
+      as its reason.
+
+      Does not return any value.
+
+   irc <text>
+
+      Sends <text> directly to the IRC server.
+
+      Does not return any value.
+
+   connect <name> <addr> <port> <nick> [username] [realname]
+
+      Connects to a new server, on <addr>:<port>.  <name> is the handle
+      that will be used to identify this network, which is stored with
+      channel modes and bans.  <nick> will be the bot's requested nickname
+      on that server.  [username] and [realname] will be used when
+      registering.
+
+      Returns 1 on success, and 0 on failure.
+
+   irctarget [name]
+
+      If [name] is specified, the network specified by <name> will be used
+      as the current network.
+
+      If no [name] is specified, the actual network connected to will be
+      restored as the current network.
+
+      Does not return any value.
+
+   setnick <nick>
+
+      Attemps to set the bot's nick to <nick>.
+
+      Note that this may not happen instantly.  The bot will start picking
+      names with an underscore appended if the desired nick is in use.
+
+      Does not return any value.
+
+
+   *** User Database Commands: ***
+
+   user getid <handle>
+   user getid -ident <ident>
+
+      Finds the user id associated with <handle> or <ident>.
+
+      The first form will return the id of a user whose handle is
+      <handle>.
+
+      The second form will return the id of a user whose mask matches
+      the ident <ident>.
+
+      Returns 0 if no user matches <handle> or <ident>.
+
+   user getname <uid>
+
+      Retrieves the name of user identified by <uid>.
+
+      Returns the empty string if <uid> is invalid.
+
+   user setname <uid> <handle>
+
+      Changes the handle of <uid> to <handle>.
+
+      Does not return any value.
+
+   user haspass <uid>
+
+      Returns 1 if <uid> has set a password, 0 otherwise.
+
+   user checkpass <uid> <pass>
+
+      Checks if user <uid> has a password of <pass>.
+
+      This will always succeed if the user has not set a password.
+
+      Returns 1 if the password matches, 0 otherwise.
+
+   user setpass <uid> <pass>
+
+      Sets the password of user <uid> to <pass>.
+
+      If <pass> is the string "-", the user's password will be cleared.
+
+      Does not return any value.
+
+   user add <name> <mask>
+
+      Adds a user to the database using <name> as the user's handle.
+
+      <mask> will be added to the user's list of allowed masks.
+
+      Returns the userid of the added user, or 0 on error.
+
+   user del <uid>
+
+      Removes the user with id <uid> from the database.
+
+      Does not return any value.
+
+   user addmask <uid> <mask>
+
+      Adds <mask> to <uid>'s list of allowed masks.
+
+      Does not return any value.
+
+   user delmask <uid>
+
+      Removes <mask> from <uid>'s list of allowed masks.
+
+      Does not return any value.
+
+   user getmasklist <uid>
+
+      Retrieves a list of all masks allowed for <uid>.
+
+      Returns a list containing the mask id of each mask.
+
+   user getmask <maskid>
+
+      Returns the mask corresponding to <maskid>, or the empty string if
+      <maskid> is invalid.
+
+   user count
+
+      Returns the number of users in the bot's database.
+
+
+   *** General User-Related Commands: ***
+
+   getuser <nick>
+
+      Retrieves the user id of the user with <nick>.
+
+      Returns 0 if user is unknown.
+
+   setauth <nick> <uid>
+
+      Asserts that the user with <nick> is authorized to use the account
+      <uid>.
+
+      Does not return any value.
+
+   getident <nick>
+
+      Returns the current ident that has <nick>.
+
+      Returns the empty string if unknown.
+
+      Note: this command will not do a WHOIS lookup.  If <nick> is not
+      currently, or was not recently, in a channel or conversation with
+      the bot, this call will return nothing.
+
+
+   *** User/Channel Mode Commands: ***
+
+   setmode <uid> <chan> <mode> [param]
+
+      Sets a mode on the current network for the user <uid> and <chan>.
+
+      <uid>   : User for which this mode applies
+      <chan>  : Channel for which this mode applies
+      <mode>  : Mode to set
+      [param] : Optional parameters to <mode>.
+
+      If <uid> is zero, this mode applies only to <chan>.
+      If <chan> is the string "-", this mode applies to the user <uid>.
+
+      <mode> is in the form [+-]<mode>.  A "+" will set the mode, as a "-"
+      will clear the mode.
+
+      Does not return any value.
+
+   getmode <uid> <chan>
+
+      Retrieves all modes that are set for <uid> and <chan>.
+
+      As with setmode, either <uid> may be 0, or <chan> may be "-".
+
+      Returns a string containing all modes that apply for the given <uid>
+      and <chan> with no seperating whitespace, or the empty string if no
+      modes are found.
+
+   checkmode <uid> <chan> <mode>
+
+      Checks if a mode <mode> is set corresponding to <uid> and <chan>.
+
+      Returns 1 if set, 0 otherwise.
+
+   getmodeparam <uid> <chan> <mode>
+
+      Retrieves the parameter that was set with setmode for the
+      corresponding <uid> and <chan>.
+
+      Returns the empty string if not found.
+
+      Note: some modes will not have parameters set, so this command will
+      not tell whether or not a mode is actually set.  It should be used
+      along with checkmode or getmode.
+
+   getmodelist <mode>
+
+      Retrieves all channels on the current network that have <mode> set.
+
+      Returns a list of all channels found, or an empty string if none
+      were found.
+
+
+   *** Variable Commands: ***
+
+   getvar <uid> <name> [default]
+
+      Retrieves a variable named <name> for user <uid>.  If <uid> is 0,
+      this will be a global variable.
+
+      If [default] is supplied, in the event that the variable
+      corresponding to <uid> and <name> is not set, [default] will be
+      returned.
+
+      Returns the empty string if the variable is not set.
+
+   setvar <uid> <name> <value>
+
+      Sets a variable named <name> for user <uid> to <value>.  If <uid> is
+      0, this will be a global variable.   If the variable is already set,
+      it will be update to <value>.
+
+      Returns <value>.
+
+   setuvar <uid> <value>
+
+      Creates a randomly named variable for user <uid>, which is
+      guaranteed to be unique, and stores <value> into it.  As with
+      setvar, <uid> may be 0.
+
+      Returns the name of the variable.
+
+   unsetvar <uid> <name>
+
+      Removes a variable named <name> for user <uid>.  As with setvar,
+      <uid> may be 0.
+
+      Does not return any value.
+
+
+   *** Ban management: ***
+
+   getbanlist <chan> <ident>
+
+      Retrieves a list of current bans in <chan> that would match <ident>,
+      using the current network.
+
+      Returns a list containing ban ids.
+
+   getbanid -mask <chan> <mask>
+   getbanid <chan> <ident>
+
+      Returns the first ban id that can be found on <chan> for <mask> or 
+      <ident> on the current network.  If the -mask flag is used, a ban id
+      that is equal to <mask> will be returned.  Otherwise, a ban that
+      matches <ident> will be returned.
+
+      Returns a ban id, or 0 if no bans were found.
+
+   getban <banid>
+
+      Retrieves information about specified <banid>.
+
+      Returns a list, containing the following:
+         0: User id for user who set ban
+         1: Mask that was matched
+         r: Message given on addban
+
+      If <banid> is invalid, the empty string will be returned.
+
+   addban <chan> <mask> <uid> [note]
+
+      Adds a ban to the database for the current network in the specified
+      channel.  <uid> is the user id that created the ban.  [note] is an
+      optional message to display when the user is kicked.
+
+      If a ban already exists for this network, channel, and mask, the
+      ban's author and note will be updated.
+
+      Returns the ban id that was created or updated.
+
+   delban <banid>
+
+      Removes the ban specified by <banid> from the database.
+
+      Does not return any value.
+
+
+   *** Notes: ***
+
+   addnote <target> <author> <note>
+
+      Records a note <note> to the user id <target>, sent from the user id
+      <author>.
+
+      Does not return any value.
+
+   delnote <noteid>
+
+      Removes the note identified by note id <noteid>.
+
+      Does not return any value.
+
+   getnote <noteid>
+
+      Retrieves information about note identified by <noteid>.
+
+      Returns a list containing the following:
+         0: user id of author
+         1: time note was sent (Unix time)
+         r: message
+
+      Returns empty list if <noteid> is invalid.
+
+   getnotelist <target> <author>
+
+      Retrieves a list of notes that were sent to the user id <target>
+      and/or sent by user id <author>.  At most one of <target> or
+      <author> may be 0, which will represent all notes sent to or sent by
+      that user.
+
+      Returns a list containing note ids.
+
+
+   *** Miscellaneous Comands: ***
+
+   match <mask> <ident>
+
+      Checks if an IRC mask <mask> matches <ident>.
+
+      Returns 1 if there is a match, 0 otherwise.
+
+   createmask <ident>
+
+      Creates a mask for the given <ident>.
+
+      Returns the created mask.
+
+   setcp <prefix>
+
+      Sets the command prefix that will be used to signify a command in
+      a public channel.  <prefix> must be one character in length.
+
+      Returns the prefix specified.
+
+   rmode [<modes> [chan]]
+
+      If no modes are specified, require the user to have an account.
+
+      If modes and a channel are given, require the user to have at least
+      one of the modes supplied in <chan>.
+
+      If only modes are given, require the user to have at least one of
+      the user modes supplied in <modes>.
+
+      If the user is not found, he will be offered to add himself via
+      the addme command.
+
+      If the user is found, but must authenticate, he will be offered to
+      use the auth command.
+
+      If the user is found, and is authenticated, he will be given an
+      "Access Denied" message.
+
+      This command will return no value on success, or will terminate
+      the current script if the user was not found, must authenticate,
+      or lacks access.
+
+      Note: this command will use the values of the Tcl variable uid.
+
+   dbqueries
+
+      Returns the number of database queries the bot has performed.
+
+   dbfetches
+
+      Returns the number of rows that the bot has fetced from the
+      database.
+
+   getsec
+
+      Returns the current Unix time in seconds since epoch.
+
+   getusec
+
+      Returns the current number of microseconds since the last tick
+      of the Unix clock.
+
+   getversion
+
+      Returns a string containing detailed version information about the
+      bot.
+
+   timestr [time]
+
+      Produces a formated time string.  [time] is the number of seconds
+      since the epoch.  If [time] is not specified, the current time
+      will be used.
+
+      Returns a string representing the current time.
+
+   shutdown [message]
+
+      Causes the bot to disconnect from all servers, close any DCC or
+      telnet connections, and exit, optionally displaying [message] as
+      its reason.
+
+      Does not return any value.
+
+   getnetwork
+
+      Returns the name of the current network.
+
+
+   *** PHPNuke Commands: ***
+
+   phpnuke connect <host> <user> <pass> <name>
+
+      Connects to the MySQL database specified by <host>, <user>, <pass>,
+         and <name>.
+
+      Returns 1 on success, 0 on failure.
+
+   phpnuke disconnect
+
+      Disconnects from a previously connected database.
+
+      Does not return any value.
+
+   phpnuke getstory <storyid>
+
+      Retrieves a story identified by <storyid> from the PHPNuke database.
+      If <storyid> is the string "latest", the most recent story will be
+      used.
+
+      Returns a list containing the following:
+         0: story id
+         1: author's name
+         2: article title
+         3: posting date
+         4: number of comments
+         5: number of reads
+         6: body of story
+
+      Returns 0 if story is not found.
+
+

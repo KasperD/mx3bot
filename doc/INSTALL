@@ -1,0 +1,198 @@
+   Mx3bot INSTALL
+   $Id: INSTALL,v 1.5 2002/07/21 03:08:03 influx Exp $
+
+
+   Note:
+
+      This document is valid for Mx3bot 0.8.6.  It may be useful for other
+      versions, but there are no guarantees.  The 0.7.x series is out of
+      date, and should probably no longer be used.
+
+
+   Getting Mx3bot:
+
+      Mx3bot can be obtained from http://bot.mx3.org, and is currently
+      only available in source code form, as a tar.gz.
+
+      Uncompress the downloaded file with tar.
+
+         $ tar zxvf mx3bot-0.8.6.tar.gz
+         $ cd mx3bot-0.8.6/
+
+
+   Required Packages:
+
+      MySQL is required for the SQL database backend.
+
+         Debian users can install the following packages:
+
+            # apt-get install mysql-server mysql libmysqlclient6-dev
+
+         Redhat users will need to download and install the following RPMs
+         (current as of March 2002):
+
+            http://www.mysql.com/Downloads/MySQL-3.23/MySQL-3.23.49a-1.i386.rpm
+            http://www.mysql.com/Downloads/MySQL-3.23/MySQL-devel-3.23.49a-1.i386.rpm
+            http://www.mysql.com/Downloads/MySQL-3.23/MySQL-shared-3.23.49a-1.i386.rpm
+ 
+            Recommended:
+            http://www.mysql.com/Downloads/MySQL-3.23/MySQL-client-3.23.49a-1.i386.rpm
+
+         See http://www.mysql.com for installation instructions.
+
+      Tcl C libraries are required.
+
+         All of the code has been tested with Tcl 8.2.3 and 8.3.3, and should
+         work with all 8.x versions.
+
+         Debian users can install the following package:
+
+            # apt-get install tcl8.3-dev   (woody)
+
+         Other users will need to download install binary packages for
+         their distribution, or install from source available at:
+
+            http://tcl.sourceforge.net
+
+
+   Configuring Build Options:
+
+      Run the configure script located in the root directory.
+
+      $ ./configure
+
+      The following options are supported:
+
+      --with-mysql		This will enable the MySQL database
+				backend.  If configure cannot
+				automatically determine the location
+				of your MySQL include files or libraries,
+				you will need to use --with-mysql-lib and
+				--with-mysql-include.
+
+      --with-mysql-lib=PATH	Tell configure to look in the directory
+				`PATH' for libmysqlclient.
+
+      --with-mysql-include=PATH	Tell configure to look in the directory
+				`PATH' for mysql.h and friends.
+
+      --enable-phpnuke		Compile functions to access a local
+				PHPNuke database.
+
+      --with-tcl-lib=PATH	Tell configure to look in the directory
+				`PATH' for the Tcl C libraries.
+
+      --with-tcl-include=PATH	Tell configure to look in the directory
+				`PATH' for the Tcl include files.
+
+      --with-regex		Enable extended regular expressions
+				in IRC masks.  Any mask that starts
+				with the character `$' will be considered
+				a regular expression instead of a standard
+				mask.
+
+      If configure fails complaining about MySQL or Tcl, you should check
+      to make sure the proper development libraries are installed, and if
+      so, provide configure with the directory that they reside in with
+      --with-mysql-lib, --with-mysql-include, --with-tcl-lib, or
+      --with-tcl-include.
+
+
+   Compilation:
+
+      $ make
+
+      This should compile the bot.
+
+      $ su
+      # make install
+      # exit
+
+      This will install the binary and the scripts under /usr/local, or
+      under a user specified location if --prefix is given.
+
+
+   Configuration/Database Setup:
+
+      The easiest way to do this is to run `mx3bot --setup' after
+      compiling Mx3bot.  This will attempt to create a `.mx3bot' directory
+      in your home directory, and populate it with any needed files.
+
+      If you are using the text database, skip to the next section.
+
+      If you are running the SQL version, the --setup function will also
+      attempt to connect to your MySQL server to add a user and its
+      database and tables.
+
+      If `mx3bot --setup' fails, you may have to add a user manually.
+
+      Manual MySQL User/Database Creation:
+
+         To create a new MySQL user, you will need to connect to the MySQL
+         database using the root account (which by default usually has no
+         password) and add a user.  The mysql client program can be used
+         to do so:
+
+            $ mysql -u root mysql
+
+         If this fails, use (you will need the MySQL root password):
+
+            $ mysql -u root -p mysql
+
+         If you are running MySQL 3.23.4 or greater, you can use the 
+         GRANT command to add a user:
+
+            mysql> GRANT ALL PRIVILEGES ON mx3bot.* TO mx3bot@localhost
+            IDENTIFIED BY 'your_password' WITH GRANT OPTION;
+
+         For older versions, this syntax should work:
+
+            mysql> INSERT INTO user (host, user, password) VALUES(
+            'localhost', 'mx3bot', PASSWORD('your_password'));
+            mysql> INSERT INTO db VALUES('%', 'mx3bot', 'mx3bot',
+            'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+            mysql> FLUSH PRIVILEGES;
+
+         You obviously should change your_password to something useful.
+
+         You can exit the mysql client by typing quit:
+
+            mysql> quit;
+
+         For more information on setting up MySQL, visit the MySQL online
+         documentation:
+
+            http://www.mysql.com/doc/
+            http://www.mysql.com/doc/A/d/Adding_users.html
+
+         You now need to create the database that the bot will use:
+
+            $ mysql -u mx3bot -p
+            Enter password:
+
+            mysql> create database mx3bot;
+            mysql> quit;
+
+         Now, setup the necessary tables:
+
+            $ mysql -u mx3bot -p mx3bot < doc/setup.mysql
+            Enter password:
+
+         This command should run without any output.
+
+         Now, add an owner to the bot:
+
+            $ mx3bot --setup-owner
+
+
+   Mx3bot Configuration:
+
+      Check ~/.mx3bot/config and modify to your liking.
+
+      You will want to modify the settings for `nick' and 'server' most
+      likely.
+
+      If all is successful, you are now set to run your bot.
+
+      See doc/README for a quick tutorial on some useful commands.
+

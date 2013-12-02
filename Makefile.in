@@ -1,0 +1,133 @@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+datadir = @datadir@
+srcdir = @srcdir@
+VPATH = @VPATH@
+cmddir = $(datadir)/mx3bot/cmd
+
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+DEFS = -DCMDDIR=\"$(cmddir)\" @DEFS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+
+CC = @CC@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+@SET_MAKE@
+
+VERSION = @VERSION@
+BASE_VERSION = @BASE_VERSION@
+
+INCLUDE = -I. -Isrc -Isrc/irc -Isrc/lib -Isrc/compat
+
+MAIN_OBJS = 			\
+	obj/channel.o		\
+	obj/config.o		\
+	obj/connection.o	\
+	obj/db.o		\
+	obj/log.o		\
+	obj/main.o		\
+	obj/misc.o		\
+	obj/mysql.o		\
+	obj/script.o		\
+	obj/setup.o		\
+	obj/user.o
+
+DB_SQL_OBJS =			\
+	obj/db/sql/ban.o	\
+	obj/db/sql/mode.o	\
+	obj/db/sql/note.o	\
+	obj/db/sql/setup.o	\
+	obj/db/sql/userdb.o	\
+	obj/db/sql/var.o
+
+DB_TEXT_OBJS =			\
+	obj/db/text/ban.o	\
+	obj/db/text/mode.o	\
+	obj/db/text/note.o	\
+	obj/db/text/setup.o	\
+	obj/db/text/userdb.o	\
+	obj/db/text/var.o
+
+IRC_OBJS = 			\
+	obj/irc/irc_channel.o	\
+	obj/irc/irc_client.o	\
+	obj/irc/irc_handler.o	\
+	obj/irc/irc_main.o	\
+	obj/irc/irc_network.o	\
+	obj/irc/irc_parse.o	\
+	obj/irc/irc_queue.o
+
+LIB_OBJS = 			\
+	obj/lib/ban.o		\
+	obj/lib/fxsite.o	\
+	obj/lib/irc.o		\
+	obj/lib/lib.o		\
+	obj/lib/mode.o		\
+	obj/lib/mx3bot.o	\
+	obj/lib/note.o		\
+	obj/lib/phpnuke.o	\
+	obj/lib/user.o		\
+	obj/lib/var.o
+
+COMPAT_OBJS =			\
+	obj/compat/getopt.o	\
+	obj/compat/getopt1.o
+
+OBJS = $(MAIN_OBJS) $(DB_TEXT_OBJS) $(DB_SQL_OBJS) $(IRC_OBJS) $(LIB_OBJS) \
+	$(COMPAT_OBJS)
+
+default: mx3bot
+
+mx3bot: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+clean:
+	rm -f $(OBJS) mx3bot
+
+obj/%.o: src/%.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDE) $(DEFS) -o $@ -c $<
+
+size: veryclean
+	cat `find . -xtype f | grep -v CVS` | wc -cl
+
+distclean: clean
+	rm -f config.cache config.status config.log autoconf.h Makefile
+
+veryclean: distclean
+	rm -f configure autoconf.h.in mx3bot-*.tar.gz
+
+dist:
+	$(MAKE) veryclean
+	mkdir mx3bot-$(BASE_VERSION)
+	tar c --exclude CVS --exclude mx3bot-$(BASE_VERSION) *		\
+		| tar x -C mx3bot-$(BASE_VERSION)
+	cat configure.in						\
+		| sed "s/MX3BOT(\([^,]*\), *cvs *)/MX3BOT(\1)/g"	\
+		> mx3bot-$(BASE_VERSION)/configure.in
+	cd mx3bot-$(BASE_VERSION); autoheader; autoconf
+	echo "build:" > mx3bot-$(BASE_VERSION)/Makefile
+	echo -e "\t./configure" >> mx3bot-$(BASE_VERSION)/Makefile
+	echo -e "\tmake" >> mx3bot-$(BASE_VERSION)/Makefile
+	tclsh misc/buildhelp.tcl > mx3bot-$(BASE_VERSION)/cmd/help.tcl
+	tar c mx3bot-$(BASE_VERSION) | gzip				\
+		> mx3bot-$(BASE_VERSION).tar.gz
+	rm -r mx3bot-$(BASE_VERSION)
+
+install: mx3bot
+	$(INSTALL) -d $(bindir)
+	$(INSTALL) -d $(cmddir)
+	$(INSTALL_PROGRAM) mx3bot $(bindir)
+	for f in `ls cmd/*.tcl`; do					\
+	   $(INSTALL_DATA) $$f $(cmddir);				\
+	done
+
+uninstall:
+	rm -f $(bindir)/mx3bot
+	rm -rf $(cmddir)
+

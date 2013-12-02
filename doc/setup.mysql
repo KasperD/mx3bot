@@ -1,0 +1,70 @@
+create table bot_mask
+(
+   mid integer not null auto_increment,
+   uid integer not null,
+   mask varchar(255) not null,
+
+   primary key(mid)
+);
+
+create table bot_mode
+(
+   uid integer not null,
+   chan varchar(32) not null,
+   net varchar(32) not null,
+   action char(1) not null,
+   param varchar(255),
+
+   primary key(uid, chan, net, action)
+);
+
+create table bot_note
+(
+   nid integer not null auto_increment,
+   author integer not null,
+   target integer not null,
+   sent integer not null,
+   note varchar(255) not null,
+
+   primary key(nid)
+);
+
+create table bot_user
+(
+   uid integer not null auto_increment,
+   name varchar(64) not null,
+   pass varchar(64),
+   level integer,
+
+   primary key(uid)
+);
+
+create table bot_var
+(
+   uid integer not null,
+   name varchar(32) not null,
+   val varchar(255) not null,
+
+   primary key(uid, name)
+);
+
+create table bot_ban
+(
+   bid integer not null auto_increment,
+   net varchar(32) not null,
+   chan varchar(32) not null,
+   uid integer not null,
+   mask varchar(255) not null,
+   note varchar(80),
+
+   primary key(bid)
+);
+
+insert into bot_var values(0, 'default-umode', 'n');
+insert into bot_var values(0, 'version', 'http://bot.mx3.org/');
+insert into bot_var values(0, 'userinfo', 'Mx3bot');
+insert into bot_var values(0, 'msg:sigint', 'Interrupted');
+insert into bot_var values(0, 'msg:sighup', 'Reconnecting');
+insert into bot_var values(0, 'msg:sigterm', 'Terminating');
+insert into bot_var values(0, 'msg:dberror', 'Lost connection to database');
+
